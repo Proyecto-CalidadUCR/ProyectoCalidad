@@ -1,0 +1,73 @@
+﻿@{
+    ViewBag.Title = "About";
+    ViewBag.Message = "Este proyecto es un esfuerzo de:";
+}
+
+    <head>
+        <meta charset="utf-8">
+        <title>Trueques &#64 UCR</title>
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="~/Content/bootstrap.css">
+        <link rel="stylesheet" href="~/Content/General.css">
+        <link rel="stylesheet" type="text/css" href="~/Content/About.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+
+    <body>
+        <div class="containerNavBarGeneral">
+            <ul class="navBarGeneral">
+                <li class="navBarGeneralLink"><a href="/Home/Index">Inicio</a></li>
+                <li class="navBarGeneralLink"><a href="/Home/About">Acerca de</a></li>
+                <li class="navBarGeneralLink"><a href="/Home/Contact">Contacto</a></li>
+            </ul>
+        </div>
+
+        <h2 style="padding-left:30px"><strong>@ViewBag.Title</strong></h2>
+        <h3 style="padding-left:30px">@ViewBag.Message</h3>
+
+        <div class="row" style="padding-top:30px; padding-left:50px">
+            <div class="col-sm">
+                <h4> Team Roditas </h4>
+                <h5> Integrantes: </h5>
+                <p> Steven Andrés Barahona Meza </p>
+                <p> Filip Sobejko Bogusz</p>
+                <p> Steff Fernández Solís</p>
+                <p> Pablo César Ruiz Vásquez</p>
+                <p> Francisco Durán Carvajal</p>
+            </div>
+
+            <div class="col-sm">
+                <h4> Team Avengers </h4>
+                <h5> Integrantes: </h5>
+                <p> Alejandro Abarca Soto </p>
+                <p> Dennis Solano Padilla</p>
+                <p> Paola Gutiérrez Vásquez</p>
+                <p> Polina Tarassenko </p>
+                <p> Nicole Castillo </p>
+                <p> Fabian Jimenez </p>
+            </div>
+
+            <div class="col-sm">
+                <h4> Turing Team </h4>
+                <h5> Integrantes: </h5>
+                <p> Josué Amador </p>
+                <p> Ignacio Arroyo </p>
+                <p> Jesús Casasola </p>
+                <p> Jose Pablo Mora Villalobos</p>
+                <p> Roy Padilla </p>
+            </div>
+
+            <div class="col-sm">
+                <h4> Team BugBusters </h4>
+                <h5> Integrantes: </h5>
+                <p> Daniel Artavia </p>
+                <p> Allan Barrantes </p>
+                <p> Daniel Henao </p>
+                <p> Brendan Naranjo</p>
+                <p> Sergio Martinez </p>
+            </div>
+        </div>
+
+    </body>

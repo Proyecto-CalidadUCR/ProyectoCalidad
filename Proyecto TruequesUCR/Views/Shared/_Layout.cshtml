@@ -1,0 +1,179 @@
+﻿
+<!doctype html>
+
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/Content/bootstrap.css">
+    <link rel="stylesheet" href="~/Content/General.css">
+    <meta charset="utf-8">
+    <title>Trueques &#64 UCR</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/Content/bootstrap.css">
+    <link rel="stylesheet" href="~/Content/General.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/Index.css">
+    <link rel="stylesheet" href="~/Content/DisplayBusqueda.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/ManejoResultadoBusqueda/Ordenamiento.js"></script>
+
+    <!--Script necesario para notificaciones-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <script src="~/Scripts/notificaciones.js"></script>
+
+</head>
+<body class="Site">
+    @{
+        var nombre = "";
+        var apellido = "";
+        var foto = "";
+        var esAdmin = "";
+        if (Request.IsAuthenticated) {
+            var cookie = HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName];
+            FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(cookie.Value);
+            string[] userData = ticket.UserData.Split('&');
+            nombre = userData[0];
+            apellido = userData[1];
+            foto = userData[2];
+            esAdmin = userData[3];  
+        }
+    }
+    <main class="Site-content">
+        <div id="page-container">
+            <div id="content-wrap">
+                <div class="navbar navbar-expand-lg navbar-dark bg-primary" style="overflow:visible">
+
+                    <div id="nav-left">
+                        <a class="navbar-brand" href="/Home/Index">
+                            <img src="~/Content/Logo/logo3.png" alt="Trueques &#64 UCR">
+                        </a>
+                    </div>
+
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <div class="input-group mx-2 my-1">
+                            <div class="barraBusqueda ">
+                                <input type="text" name="searchbar" id="searchbar" class="searchTerm" placeholder="Buscar por #hashtag, categoria o nombre del ítem...">
+                                <button id="searchitems" type="button" onclick="get_value()" class="searchButton "><i class="fa fa-search  "></i></button>
+                                <div style="clear: both"></div>
+                            </div>
+                        </div>
+
+                        <ul class="navbar-nav text-right">
+                            @if (Request.IsAuthenticated)
+                            {
+                                <li class="nav-item mx-2 my-2 text-right text-nowrap py-2 wrapper">
+                                    <div class="notification_wrap">
+
+                                        <div class="btn btn-not" id="botonNot" style="width:100%; background-color:#005da4; border-color:#005da4 ;z-index: 1000;">
+                                            <span id="contadorNoti" class="badge badge-pill badge-primary" style="float:right; margin-bottom:-10px;"></span>
+                                            <i class="fa fa-bell" style="color:white; font-size:30px"></i>
+                                        </div>
+
+                                        <div id="listaNoti" class="dropdown" style="overflow-y: scroll; z-index: 1000;">
+                                            <!--Elementos-->
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="nav-item text-nowrap my-3 mx-2 ">
+                                    <ul style="list-style-type:none;">
+                                        <li class="text-nowrap">
+                                            @if (esAdmin == "0")
+                                            {
+                                                <a href="@Url.Action("Details", "Perfil",new {user=User.Identity.Name })" style="color :var(--verdeUCR);"> @nombre @apellido</a>
+                                            }
+                                            else
+                                            {
+                                                <a href="@Url.Action("Details", "Administrador",new {user=User.Identity.Name })" style="color :var(--verdeUCR);"> @nombre @apellido</a>
+                                            }
+                                            <img src="@Url.Content("~/Content/Images/Avatars/"+foto)" id="foto-layout" class="iconoperfil mx-2">
+                                            <br />
+                                        </li>
+                                    </ul>
+                                    <li class="nav-item mx-2 my-2 text-right text-nowrap py-2">
+                                        <a href="@Url.Action("Logout", "Usuario")" class="btn btn-success" style="width:100%">
+                                            <i class="fa fa-sign-out" style="color :white;"></i>
+                                            <span>
+                                                <strong>Cerrar Sesion</strong>
+                                            </span>
+                                        </a>
+                                    </li>
+
+                                </li>
+
+                            }
+                            else
+                            {
+                                <li class="nav-item mx-2 my-2 text-right text-nowrap">
+                                    <a href="@Url.Action("Login", "Usuario")" class="btn btn-success" id="IniciarSesion" style="width:100%">
+                                        <i class="fa fa-user" style="color :white;"></i>
+                                        <span>
+                                            <strong>&nbsp Iniciar Sesion</strong>
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item mx-2 my-2 text-right text-nowrap">
+                                    <a href="@Url.Action("Create", "Comerciante")" width="250" class="btn btn-success" style="width:100%">
+                                        <i class="fa fa-sign-in" style="color :white;"></i>
+                                        <span>
+                                            <strong>&nbsp Registrarse</strong>
+                                        </span>
+                                    </a>
+                                </li>
+
+                            }
+                        </ul>
+                    </div>
+
+                    </div>
+                    @RenderBody()
+                </div>
+        </div>
+    </main>
+        <footer class="Site-footer">
+        <div class="Footer">
+            <div class="container text-center">
+                <span style="color: white">© Escuela de Ciencias de la Computación e Informática 2016-2020 - Tel. 2511-8000</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    @RenderSection("scripts", required: false)
+    <script src="~/Scripts/umd/popper.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/AgregarItem.js"></script>
+    <script>
+        //Se quitan el ";" para que no se considere a la hore de busqueda.
+    function get_value() {
+      event.preventDefault();
+      var url = '@Url.Action("DesplegarResultadosDeBusqueda", "InformacionItemBuscado", new { criterioBusqueda = "VAL"})';
+      url = url.replace("VAL", $("#searchbar").val());
+        url = url.replace("#", "%23");
+        url = url.replace(";", "");
+      //alert(url); //just for debugging
+      window.location.href = url;
+        }
+
+         var input = document.getElementById("searchbar");
+    input.addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("searchitems").click();
+        }
+    });
+    </script>
+
+</body>
+</html>

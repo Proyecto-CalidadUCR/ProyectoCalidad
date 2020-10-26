@@ -1,0 +1,118 @@
+﻿@model IEnumerable<Proyecto_TruequesUCR.Models.Item>
+
+@{
+    ViewBag.Title = "DisplayBusqueda";
+}
+
+<head>
+    <meta charset="utf-8">
+    <title>Trueques &#64 UCR</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="~/Content/General.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/Index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div class="containerNavBarGeneral">
+        <ul class="navBarGeneral">
+            <li class="navBarGeneralLink"><a href="/Home/Index">Inicio</a></li>
+            <li class="navBarGeneralLink"><a href="/Home/About">Acerca de</a></li>
+            <li class="navBarGeneralLink"><a href="/Home/Contact">Contacto</a></li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="page-header">
+                <h2>Resultados de búsqueda</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-deck" id="container">
+
+        @if (Model == null)
+        {
+            <span>No se encontró ningún item</span>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <div class="row-md-3 row-sm-3 row-xs-6">
+                    <div class="col-md-3 col-sm-3 col-xs-6">
+                        <div class="card" style="width:350px">
+                            <img class="card-img-top" @*src=@Html.DisplayFor(modelItem => item.Foto.Foto1)*@ alt="Imagen en card del producto">
+                            <div class="card-body">
+                                <h4 class="card-title"> @Html.DisplayFor(modelItem => item.Titulo) </h4>
+                                <p class="card-text">  @Html.DisplayFor(modelItem => item.Descripcion) </p>
+                                <p class="card-text"> @*@Html.DisplayFor(modelItem => item.Comerciante.NombreCompleto)*@ </p>
+                                <!--Aquí irían las estrellas de calificación
+                                       variable ratings como atributo de item
+                                <div class="ratings">
+                                    <p>
+                                       for(int i = 1 ; i <= ratings; ++i) {
+                                             <span class="glyphicon glyphicon-star"></span>
+                                       }
+                                        for(int i = ratings; i <= 5; ++i ){
+                                             <span class="glyphicon glyphicon-star-empty"></span>
+                                        }
+                                    </p>
+                                 </div>
+                                    -->
+                                <p class="card-text"> @Html.DisplayFor(modelItem => item.Fecha) </p>
+                                <a href="#" class="stretched-link">Ver Producto</a>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+
+                </div>
+            }
+        }
+
+        @if (ViewBag.Id != 1 && ViewBag.Id != 0)
+        {
+            <button type="submit" class="buttonNext" onclick="@Html.Raw("location.href='" + Url.Action("DisplayBusqueda", new {@id = ViewBag.Id - 1}) + "';")"><i class="fa fa-angle-double-left"></i> </button>
+        }
+        @{
+            int cantidadPags = ViewBag.cantidadElems / 10;
+            if (ViewBag.cantidadElems % 10 != 0)
+            {
+                cantidadPags++;
+            }
+            if (ViewBag.Id != cantidadPags)
+            {
+
+                <button type="submit" class="buttonNext" onclick="@Html.Raw("location.href='" + Url.Action("DisplayBusqueda", new {@id = ViewBag.Id + 1}) + "';")"><i class="fa fa-angle-double-right"></i> </button>
+            }
+        }
+
+        <!--<a href="#" class="previous">&laquo; Previous</a>
+        <a href="#" class="next">Next &raquo;</a>-->
+
+    </div>
+
+    <!-- <a href="#" class="previous">&laquo; Previous</a>
+    <a href="#" class="next">Next &raquo;</a>-->
+    <script>
+        function ClickButton1() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("ClickButton1", "Item")',
+            data: { searchbar: document.getElementById("searchbar").value },
+            async: true,
+                success: function (msg) {
+                    alert(msg);
+                },
+                error: function () {
+                    return "error";
+                }
+            });
+        }
+    </script>
+</body>
+
+
+

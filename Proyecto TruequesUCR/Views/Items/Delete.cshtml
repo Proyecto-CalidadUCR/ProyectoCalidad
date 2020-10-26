@@ -1,0 +1,166 @@
+﻿@model Proyecto_TruequesUCR.Models.Item
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+@Styles.Render("~/Content/VistaItem/Delete.css")
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/Content/bootstrap.css">
+    <link rel="stylesheet" href="~/Content/General.css">
+    <link rel="stylesheet" href="~/Content/Roditas.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/Index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div class="container-fluid" style="border-left-width: 1px; border-left-style:solid; border-left-color: lightgray; height: 100%;">
+        <div class="row py-4">
+            <div class="col-3">
+                @{
+                    if (Model.Fotos != null)
+                    {
+                        if (Model.Fotos.Count > 1)
+                        {
+                            
+                            int index = 0;
+                            <div id="carruselDelete" class="carousel slide border" style="height:150px;width:150px">
+                                <div class="carousel-inner" role="listbox">
+                                    <ol class="carousel-indicators indicadoresCarrusel" style=" margin-bottom:5px; height:10px;">
+                                        @foreach (var foto in Model.Fotos)
+                                        {
+                                            String slideClass = "active";
+                                            String slide = "" + index;
+                                            if (index != 0)
+                                            {
+                                                slideClass = "";
+                                            }
+                                            ++index;
+                                            <li data-target="#carruselDelete" data-slide-to="@slide" class="@slideClass" style="border-radius: 50%; background-color: #6dc067; width:10px; height:10px;"></li>
+                                        }
+                                    </ol>
+                                    @{ index = 0; }
+                                    @foreach (var foto in Model.Fotos)
+                                    {
+                                        String img64 = Convert.ToBase64String(foto.Foto);
+                                        String img64Url = string.Format("data:image/" + "jepg" + ";base64,{0}", img64);
+                                        String clase;
+                                        if (index == 0)
+                                        {
+                                            clase = "carousel-item active";
+                                        }
+                                        else
+                                        {
+                                            clase = "carousel-item";
+                                        }
+                                        <div class="@clase">
+                                            <img src="@img64Url" style="height:150px;width:150px" />
+                                        </div>
+                                        ++index;
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            foreach (var foto in Model.Fotos)
+                            {
+                                String img64 = Convert.ToBase64String(foto.Foto);
+                                String img64Url = string.Format("data:image/" + "jepg" + ";base64,{0}", img64);
+                                <img src="@img64Url" style="height:150px;width:150px" />
+                            }
+                        }
+                    }
+                }
+            </div>
+            <div class="col-3">
+                <h2>
+                    @Html.DisplayFor(modelItem => Model.Titulo)
+                </h2>
+                @Html.DisplayFor(modelItem => Model.Descripcion)
+            </div>
+            <div class="col-3">
+
+                <div class="row">
+
+                    @Html.DisplayName("Categoria")
+
+                </div>
+                <div class="row">
+
+                    @Html.DisplayName("Estado")
+
+                </div>
+                <div class="row">
+
+                    @Html.DisplayName("Etiquetas")
+
+                </div>
+                <div class="row">
+
+                    @Html.DisplayName("Visibilidad")
+
+                </div>
+                <div class="row">
+
+                    @Html.DisplayNameFor(model => Model.Fecha)
+
+                </div>
+                <div class="row">
+
+                    @Html.DisplayName("Nombre del truequeador")
+
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="row">
+                    @Html.DisplayFor(modelItem => Model.Categoria.Nombre_Categoria)
+                </div>
+                <div class="row">
+                    @Html.DisplayFor(modelItem => Model.EstadoItem.Nombre_Estado)
+                </div>
+                <div class="row">
+                    @if (Model.Etiquetas.Count == 0)
+                    {
+                        @Html.DisplayName("No contiene etiquetas")
+                    }
+                    @foreach (var etiqueta in Model.Etiquetas)
+                    {
+                        @Html.DisplayName(etiqueta.Nombre_Etiqueta)
+                        @Html.DisplayName(" ")
+                    }
+                </div>
+                <div class="row">
+                    @Html.DisplayFor(modelItem => Model.Visibilidad.Tipo)
+                </div>
+                <div class="row">
+                    @Html.DisplayFor(modelItem => Model.Fecha)
+                </div>
+                <div class="row">
+                    @Html.DisplayFor(modelItem => Model.Comerciante.Nombre)
+                </div>
+            </div>
+        </div>
+
+        <hr style="color: lightgray; background-color: lightgray;" />
+
+    </div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-delete">
+            <input type="submit" value="Eliminar" class="btn btn-success" />
+            @Html.ActionLink("Cancelar", "Index",null, new { @style = "color:#6dc067;" })
+        </div>
+    }
+</body>
+</html>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

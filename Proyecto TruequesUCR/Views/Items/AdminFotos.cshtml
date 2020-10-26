@@ -1,0 +1,82 @@
+﻿@model Proyecto_TruequesUCR.Models.Item
+
+@{
+    ViewBag.Title = "AdminFotos";
+}
+<head>
+    <meta charset="utf-8">
+    <title>Trueques &#64 UCR</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/Content/bootstrap.css">
+    <link rel="stylesheet" href="~/Content/General.css">
+    <link rel="stylesheet" href="~/Content/Roditas.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/Index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="~/Scripts/AgregarItem.js"></script>
+</head>
+
+
+@using (Html.BeginForm("AgregarFoto", "Items", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    @Html.AntiForgeryToken()
+    <h2 class="text-center">Administrar Fotos</h2>
+    @Html.HiddenFor(model => model.Id_Item)
+
+    @Html.HiddenFor(model => model.Email_Comerciante)
+
+    <div id="fotosItem" class="container-fluid center">
+
+        <div class="containerImagen conatiner form-group col-12 center">
+            <div class="text-center form-group" style="height:150px; width:150px; margin-bottom: 10px;">
+                <div id="containerCarruselAdmin">
+                    <div id="carrusel" class="carousel slide">
+                    </div>
+                </div>
+            </div>
+        </div>
+        @{
+            if (Model.Fotos != null)
+            {
+                <div class="text-center">
+                    <input class="inputFoto" type="file" id="FotosF" name="FotosF" onchange="previewImageAdmin(event)" multiple size="10" />
+                    <label class="labelFoto" style="color:#6dc067" for="FotosF">Agregar Fotos</label>
+                </div>
+
+                <h4 class="text-center">Fotos Agregadas previamente(Seleccione para eliminar)</h4>
+                if (Model.Fotos.Count > 0)
+                {
+                    var i = 0;
+                    <div class="row" style="">
+                        @foreach (var foto in Model.Fotos)
+                        {
+                        <div class="col-4 text-center" style="padding: 10px 0;">
+                            @{
+                                String img64 = Convert.ToBase64String(foto.Foto);
+                                String img64Url = string.Format("data:image/" + "jepg" + ";base64,{0}", img64);
+                            }
+                            <img class="center" src="@img64Url" width="150" height="150" />
+                            <input type="checkbox" name="Eliminar" value=@foto.Id_Foto id=@foto.Id_Foto />
+                            <label  style="color:#6dc067" for=@foto.Id_Foto>Eliminar</label>
+                           
+                        </div>
+                            i++;
+                        }
+                    </div>
+
+                }
+                else
+                {
+                    <h3 class="text-center">Este ítem no tiene fotos</h3>
+                }
+            }
+
+        }
+
+    </div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-success btn-agregar">Guardar y regresar</button>
+    </div>
+}

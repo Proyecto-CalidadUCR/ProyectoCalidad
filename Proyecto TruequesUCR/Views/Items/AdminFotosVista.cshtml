@@ -1,0 +1,88 @@
+﻿@model Proyecto_TruequesUCR.Models.Item
+
+@{
+    ViewBag.Title = "AdminFotos";
+}
+<head>
+    <meta charset="utf-8">
+    <title>Trueques &#64 UCR</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/Content/bootstrap.css">
+    <link rel="stylesheet" href="~/Content/General.css">
+    <link rel="stylesheet" href="~/Content/Roditas.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/Index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="~/Scripts/AgregarItem.js"></script>
+</head>
+
+
+<div class="containerNavBarGeneral">
+    <ul class="navBarGeneral">
+        <li class="navBarGeneralLink"><a href="/Home/Index">Inicio</a></li>
+        <li class="navBarGeneralLink"><a href="/Home/About">Acerca de</a></li>
+        <li class="navBarGeneralLink"><a href="/Home/Contact">Contacto</a></li>
+    </ul>
+</div>
+
+@using (Html.BeginForm("AgregarFoto", "Items", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+   
+    @Html.AntiForgeryToken()
+    <h2 class="text-center">Administrar Fotos</h2>
+    @Html.HiddenFor(model => model.Id_Item)
+
+    @Html.HiddenFor(model => model.Email_Comerciante)
+    
+<div id="fotosItem" class="w-75 container-fluid border center">
+
+    <div class="containerImagen conatiner form-group col-12 center">
+        <div class="text-center form-group" style="height:150px; margin-bottom: 10px;">
+            <div id="containerCarrusel">
+                <div id="carrusel" class="carousel slide">
+                </div>
+            </div>
+        </div>
+    </div>
+    @{
+        if (Model.Fotos != null)
+        {
+            <div class="text-center">
+                <input class="inputFoto" type="file" id="FotosF" name="FotosF" onchange="previewImage(event)" multiple size="10" />
+                <label class="labelFoto" for="FotosF">Agregar Fotos</label>
+            </div>
+                
+            <h4 class="text-center">Fotos Agregadas previamente</h4>
+            if (Model.Fotos.Count > 0)
+            {
+                var i = 0;
+                <div class="row" style="">
+                    @foreach (var foto in Model.Fotos)
+                    {
+                        <div class="col-4 text-center" style="padding: 10px 0;">
+                            @{
+                                String img64 = Convert.ToBase64String(foto.Foto);
+                                String img64Url = string.Format("data:image/" + "jepg" + ";base64,{0}", img64);
+                            }
+                            <img class="center" src="@img64Url" width="150" height="150" />
+                            @Html.ActionLink("Eliminar", "DeleteFoto", new { id = @ViewData["id"], email = @ViewData["email"], idFoto = foto.Id_Foto }, htmlAttributes: new { @class = "text-center", @style = "color:#005da4" })
+                        </div>
+                        i++;
+                    }
+                </div>
+
+            }
+            else
+            {
+                <h3 class="text-center">Este ítem no tiene fotos</h3>
+            }
+        }
+                                
+    }
+
+</div>
+<div class="text-center">
+    <button type="submit" class="btn btn-success btn-agregar">Guardar y regresar</button>
+</div>
+}

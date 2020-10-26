@@ -1,0 +1,160 @@
+﻿@model Proyecto_TruequesUCR.Models.Administrador
+
+@{
+    //ViewBag.Title = "Perfil de " + ViewBag.nombre_completo;
+}
+@Styles.Render("~/Content/Comerciante/Perfil.css")
+@Styles.Render("~/Content/AdministrarCategorias.css")
+
+@{
+    var nombre = "";
+    var apellido = "";
+    var foto = "";
+    var nombre_completo = "";
+    var esAdmin = "";
+    if (Request.IsAuthenticated)
+    {
+        var cookie = HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName];
+        FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt(cookie.Value);
+        string[] userData = ticket.UserData.Split('&');
+        nombre = userData[0];
+        apellido = userData[1];
+        foto = userData[2];
+        esAdmin = userData[3];
+        nombre_completo = nombre + " " + apellido;
+    }
+}
+    <div class="containerNavBarGeneral">
+        <ul class="navBarGeneral">
+            <li class="navBarGeneralLink">
+                <a href="/Administrador/ReportesPendientes">Reportes Pendientes</a>
+            </li>
+            <li class="navBarGeneralLink">
+                <a href="/Administrador/AdministracionUsuarios">Administración de Usuarios</a>
+            </li>
+            <li class="navBarGeneralLink">
+                <a href="/Administrador/Details?user=@User.Identity.Name">Ver Perfil del Administrador</a>
+            </li>
+            <li class="navBarGeneralLink">
+                <a href="/HistorialTrueques/DashBoard">Estadísticas</a>
+            </li>
+            <li class="navBarGeneralLink">
+                <a href="/Administrador/AgregarAdmin">Agregar Administrador</a>
+            </li>
+            <li class="navBarGeneralLink">
+                <a href="/Administrador/AdministrarCategorias">Administrar categorías</a>
+            </li>
+
+        </ul>
+    </div>
+    <div class="container-fluid h-100 w-100 d-inline-block">
+        <div class="row justify-content-center w-100">
+            <!-- Contenedor principal -->
+            <div class="col-md-7 mt-5 fondo-blanco h-100">
+                <div class="row">
+                   
+
+                    <!-- Cuerpo del Perfil -->
+                    <div class="col">
+                        <!-- Header -->
+                        <div class="row">
+                            <div class="col-md-12 fondo-azul text-center">
+                                <img src="@Url.Content("~/Content/Images/Avatars/"+foto)" alt=@nombre_completo class="foto-perfil">
+                            </div>
+                        </div>
+
+
+                        @using (Html.BeginForm("AdministrarCategorias", "Administrador", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <!-- Contenido -->
+                            <div class="row">
+                                <div class="col-md-12" style="padding: 30px 50px;">
+                                    <h5 class="titulo-sec text-center " style="margin: 20px 0px;">Administrar categorías</h5>
+                                    <ul id="listaCategorias">
+                                        @foreach (var cat in ViewBag.Nombre_Categoria_Item)
+                                        {
+                                            var idLista = "lista" + cat.Nombre_Categoria;
+                                            var idLabel = "label" + cat.Nombre_Categoria;
+                                            var onClick = "sacarHijos(\'" + "null\'" + ",\'" + cat.Nombre_Categoria + "\')";
+                                            <li>
+                                                <input id="@cat.Nombre_Categoria" name="Nombre_Categoria_Item[]" value="@cat.Nombre_Categoria" type="checkbox" onclick="@onClick" />
+                                                <label id="@idLabel" class="categoria" onclick="modificarCategoria(false,'@cat.Nombre_Categoria')">@cat.Nombre_Categoria</label>
+                                                <ul id="@idLista"></ul>
+                                            </li>
+                                        }
+                                        <li id="agregarParaPrincipales"><a class='botonAgregar' onclick="agregarCategoria(false, 'null')">+ Agregar</a></li>
+                                    </ul>
+                                </div>
+                                <div class="button botonesAgregarCancelar col-sm-7" style="padding: 30px 50px;">
+                                    <button type="submit" class="btn btn-success btn-agregar">Guardar</button>
+                                    @Html.ActionLink("Cancelar", "AdministrarCategorias", null, new { @class = "btn btn-outline-success" })
+                                </div>
+                            </div>
+                            <div id="hiddenList" hidden></div>
+                        }
+                        <div style="margin: 30px 0px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="agregarModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body container-fluid">
+                        <h5>Ingrese el nombre de la nueva categoría:</h5>
+                        <input id="nombreAgregado" type="text" /><br /><br />
+                        <input id="nombrePadreAgregado" type="hidden" />
+                        <button class="btn btn-success btn-agregar" onclick="agregarCategoria(true, null)">Agregar</button>
+                        <button class="btn btn-outline-success" data-dismiss="modal" onclick="document.getElementById('nombreAgregado').value = '';">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modificarModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body container-fluid">
+                        <h5>Ingrese el nuevo nombre de la categoría:</h5>
+                        <input id="nuevoNombre" type="text" /><br /><br />
+                        <input id="nombreAnterior" type="hidden" />
+                        <input id="categoria" type="hidden" />
+                        <button class="btn btn-success btn-agregar" onclick="modificarCategoria(true, null)">Aceptar</button>
+                        <button class="btn btn-outline-success" data-dismiss="modal" onclick="document.getElementById('nuevoNombre').value = '';">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="errorModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body container-fluid">
+                        <h5 id="tituloError"></h5>
+                        <p id="cuerpoError"></p>
+                        <button class="btn btn-success btn-agregar" data-dismiss="modal">Aceptar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/Scripts/AdministrarCategorias.js")
+}

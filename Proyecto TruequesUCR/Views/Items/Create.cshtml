@@ -1,0 +1,230 @@
+﻿<!--
+    Se va a trabajar en refinar la vista ya que, en la primera iteración no se llegó al alcance deseado.
+    Hay que mejorar los contrastes entres los campos que va a llenar el usuario.
+    Limpiar el código, ya que no es tan legible, además agregar comentarios.
+    Tener una buena arquitectura, separando los scripts del código HTML.
+-->
+
+@model Proyecto_TruequesUCR.Models.ItemCreator
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Trueques &#64 UCR</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/Content/bootstrap.css">
+    <link rel="stylesheet" href="~/Content/General.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/Index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/Content/Roditas.css">
+    <script type="text/javascript" src="~/Scripts/AgregarItem.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div class="containerNavBarGeneral">
+        <ul class="navBarGeneral">
+            <li class="navBarGeneralLink"><a href="/Home/Index">Inicio</a></li>
+            <li class="navBarGeneralLink"><a href="/Home/About">Acerca de</a></li>
+            <li class="navBarGeneralLink"><a href="/Home/Contact">Contacto</a></li>
+        </ul>
+    </div>
+
+
+@using (Html.BeginForm("Create", "Items", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+<div id="agregarItem" class="border container form-horizontal w-50 m-auto" style="padding-top: 10px; background-color: #dee2e6;">
+    <h2 class="text-center">Nuevo Ítem</h2>
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+<div class="form-row">
+    <div class="col-sm-6">
+        <div class="form-group">
+            @Html.LabelFor(model => Model.Titulo, "Título", htmlAttributes: new { id = "nombreTitulo", @class = "control-label col-md-2" })
+            <div class="col-sm-7">
+                @Html.EditorFor(model => model.Titulo, new { htmlAttributes = new { @class = "form-control titulo", placeholder = "Título del ítem" } })
+            </div>
+            @Html.ValidationMessageFor(model => model.Titulo, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Descripcion, "Descripción", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-sm-7">
+                @Html.TextAreaFor(model => model.Descripcion, 5, 55, new { htmlAttributes = new { @class = "form-control" }, @placeholder = "Descripción del ítem", @class = "descripcion" })
+            </div>
+            @Html.ValidationMessageFor(model => model.Descripcion, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <!--
+        Estudiante: Pablo César Ruiz Vásquez
+        Carné: B56406
+        Funcionalidad a implementar: Agregar el carrusel para visualizar las múltiples fotos cuando el usuario está agregando un ítem
+                                     además de agregar las fotos si el usuario decide agregar más antes de guardar el ítem.
+    -->
+    <!--
+        Evaluación de actividad supervisada:
+        Punto 8: Sí cumple con el DoD pues es código limpio, implementa la funcionalidad especificada para implementar y funciona correctamente.
+        Punto 9: ID de la historia: ROD-1-4.0
+                 Historia de Usuario: Como truequeador quiero agregar múltiples fotografías a un producto para hacerlo más atractivo a los compradores
+                 Criterios de aceptación: Dado que un comerciante quiera agregar más de una fotografia a un producto, cuando se produzca la solicitud de
+                                          agregar fotografias por medio del botón correspondiente, entonces se muestre el explorador de archivos para que
+                                          agregue las fotografías deseadas y se muestren para el producto
+
+                                          Se tiene que aceptar JPG, PNG y BMP
+
+
+        -->
+    <div class="containerImagen form-group col-sm-6"  style="z-index: 1;">
+        <div class="text-center form-group col-md-10 containerImagenCreate">
+            <div id="containerCarrusel">
+                <div id="carrusel" class="carousel slide">
+                    <img class="itemMaxTamano" width="150" height="150" id="IDImagen" src="~/Content/Images/fotoPredeterminada.png" /><br />
+                </div>
+            </div>
+            <input class="inputFoto" type="file" id="FotosF" name="FotosF" onchange="previewImage(event)" multiple size="10" />
+            <label class="labelFoto"  style="color:#6dc067" for="FotosF">Elegir Foto</label>
+        </div>
+        <div class="text-center form-group col-md-10" style="margin-top: 80px;">
+            <label id="labelArchivo">No hay ningún archivo adjunto</label><label id="cancelar" class="labelFoto" onclick="deleteFile()" style="color:#6dc067; margin-left: 10px; display: none;">X</label><br />
+            <input class="inputFoto" type="file" id="archivo" name="archivo" onchange="showFile(event)" accept="application/pdf" style="margin: 0;" />
+            <label id="adjuntarArchivo" class="labelFoto" style="color:#6dc067; margin: 0;" for="archivo">Adjuntar archivo</label>
+        </div>
+    </div>
+ </div>
+
+
+
+ 
+
+<div class="form-row">
+    <div class="col-sm-6">
+        <div class="form-group">
+            @Html.LabelFor(model => Model.Etiqueta, "Etiquetas", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-sm-7">
+                @Html.EditorFor(model => model.Etiqueta, new { htmlAttributes = new { @id = "etiquetas", @class = "form-control titulo", placeholder = "Ejemplo: #Terror" } })
+                @Html.ValidationMessageFor(model => model.Etiqueta, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Nombre_Estado_Item, "Estado", htmlAttributes: new { id = "Nombre estado", @class = "control-label col-md-2" })
+            <div class="col-sm-7">
+                @Html.DropDownList("Nombre_Estado_Item", null, "-- Escoja un estado --", htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Nombre_Estado_Item, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Tipo_Visibilidad, "Visibilidad", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-sm-7">
+                @Html.DropDownList("Tipo_Visibilidad", null, "-- Escoja la visibilidad --", htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Tipo_Visibilidad, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.10.0.min.js" type="text/javascript"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/jquery-ui.min.js" type="text/javascript"></script>
+    <link href="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.9.2/themes/blitzer/jquery-ui.css" rel="Stylesheet" type="text/css" />
+
+    <script>
+        var $x = jQuery.noConflict();
+    </script>
+    <div>
+        <input type="hidden" id="hfCustomer" />
+    </div>
+
+    <script type="text/javascript">
+
+        $x(function () {
+            $x("#etiquetas").autocomplete({
+                source: function (request, response) {
+                    $x.ajax({
+                        url: "/Items/Autocomplete",
+                        data: "{ 'search': '" + request.term + "'}",
+                        dataType: "json",
+                        type: "POST",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            var texto = String(request.term).split(" ");
+                            var textoSinUltimo = "";
+                            for (var i = 0; i < texto.length - 1; i++) {
+                                textoSinUltimo += texto[i] + " ";
+                            }
+                            response($.map(data, function (item) {
+                                return textoSinUltimo + item.val;
+                            }))
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                select: function (i) {
+                    $x("hfCustomer").val(i.val);
+                },
+                minLength: 1
+            });
+        });
+    </script>
+    <!--
+        Actividad supervisada 2:
+        Estudiantes: Pablo César Ruiz Vásquez, Steven Barahona, Francisco Durán
+        Carné: B56406, B70893, B72639
+        Funcionalidad a implementar: Agregar el árbol de categorías a la vista de crear y editar
+    -->
+    <div class="col-sm-6">
+        <div class="form-group">
+            @Html.LabelFor(model => model.Nombre_Categoria_Item, "Categoría", htmlAttributes: new { @class = "control-label col-md-2" })
+            <ul>
+                @foreach (var cat in ViewBag.Nombre_Categoria_Item)
+                {
+
+                    var idLista = "lista" + cat.Nombre_Categoria;
+                    var onClick = "sacarHijos(\'"+"null\'" +",\'"+ cat.Nombre_Categoria + "\')";
+                    <li>
+                        <input id="@cat.Nombre_Categoria" name="Nombre_Categoria_Item[]" value="@cat.Nombre_Categoria" type="checkbox" onclick="@onClick" />
+                        <label for="@cat.Nombre_Categoria">@cat.Nombre_Categoria</label>
+                        <ul id="@idLista"></ul>
+                    </li>
+                }
+            </ul>
+            @Html.ValidationMessageFor(model => model.Nombre_Categoria_Item, "", new { @class = "text-danger" })
+        </div>
+    </div>
+</div>
+    
+
+    <div class="form-row">
+        <div class=" col-sm-6">
+            <div class="button botonesAgregarCancelar col-sm-7">
+                <button type="submit" class="btn btn-success btn-agregar">Agregar</button>
+                @Html.ActionLink("Cancelar", "Index", null, new { @class = "btn btn-outline-success" })
+            </div>
+        </div>
+    </div>
+            
+    <div style="clear: both"></div>
+</div>
+    }
+</body>
+</html>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/Scripts/CategoriasHijo.js")
+}
